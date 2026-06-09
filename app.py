@@ -20,7 +20,7 @@ import llm
 import history
 from log_analyzer import analyze_log
 
-st.set_page_config(page_title="EPM Intelligent Support Assistant",
+st.set_page_config(page_title="EPM Support Assistant",
                    page_icon="🛠️", layout="wide")
 
 # ------- light styling -------
@@ -55,19 +55,23 @@ for _k in ("SUPABASE_URL", "SUPABASE_KEY"):
         os.environ[_k] = _v
 
 
-# ---------------- sidebar: key + knowledge base ----------------
-with st.sidebar:
-    st.header("Setup")
-    api_key = st.text_input(
-        "Groq API key", type="password",
-        value=_secret("GROQ_API_KEY", ""),
-        help="Free key from console.groq.com/keys",
-    )
-    model = st.selectbox("Model",
-                         [llm.MODEL, llm.FALLBACK_MODEL],
-                         help="70B = best quality. 8B = faster / higher free-tier limits.")
+# Key + model come from secrets when available (so the deployed app shows no
+# Setup section). The input below only appears locally when no secret is set.
+api_key = _secret("GROQ_API_KEY", "")
+model = _secret("GROQ_MODEL", llm.MODEL)
 
-    st.divider()
+# ---------------- sidebar ----------------
+with st.sidebar:
+    if not api_key:
+        st.header("Setup")
+        api_key = st.text_input(
+            "Groq API key", type="password",
+            help="Free key from console.groq.com/keys",
+        )
+        model = st.selectbox("Model", [llm.MODEL, llm.FALLBACK_MODEL],
+                             help="70B = best quality. 8B = faster / higher free-tier limits.")
+        st.divider()
+
     st.subheader("Knowledge base")
     st.write("Drop `.txt .md .pdf .docx .csv .xlsx` files into the "
              "`knowledge_base/` folder, then rebuild.")

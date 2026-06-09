@@ -1,0 +1,6 @@
+.streamlit/secrets.toml
+knowledge_base/.kb_cache.npz
+__pycache__/
+*.pyc
+.venv/
+history/

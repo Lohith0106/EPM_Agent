@@ -1,4 +1,4 @@
-# 🛠️ EPM Intelligent Support Assistant
+# 🛠️ EPM Support Assistant
 
 An AI support tool for Oracle EPM / EPBCS / PBCS / FDMEE professionals — built
 entirely on **free tools**.

@@ -21,7 +21,8 @@ import history
 from log_analyzer import analyze_log
 
 st.set_page_config(page_title="EPM Support Assistant",
-                   page_icon="🛠️", layout="wide")
+                   page_icon="🛠️", layout="wide",
+                   initial_sidebar_state="collapsed")
 
 # ------- light styling -------
 st.markdown("""
@@ -36,7 +37,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🛠️ EPM Intelligent Support Assistant")
+st.title("🛠️ EPM Support Assistant")
 st.caption("Root-cause diagnosis, FDMEE log analysis, and EPM Q&A — grounded in your own notes.")
 
 def _secret(key, default=""):
@@ -60,7 +61,7 @@ for _k in ("SUPABASE_URL", "SUPABASE_KEY"):
 api_key = _secret("GROQ_API_KEY", "")
 model = _secret("GROQ_MODEL", llm.MODEL)
 
-# ---------------- sidebar ----------------
+# ---------------- sidebar (only shows locally when no key is configured) ----------------
 with st.sidebar:
     if not api_key:
         st.header("Setup")
@@ -70,30 +71,15 @@ with st.sidebar:
         )
         model = st.selectbox("Model", [llm.MODEL, llm.FALLBACK_MODEL],
                              help="70B = best quality. 8B = faster / higher free-tier limits.")
-        st.divider()
 
-    st.subheader("Knowledge base")
-    st.write("Drop `.txt .md .pdf .docx .csv .xlsx` files into the "
-             "`knowledge_base/` folder, then rebuild.")
-    if st.button("🔄 Build / refresh index", use_container_width=True):
-        with st.spinner("Embedding your reference materials..."):
-            n_chunks, n_files = rag.build_index(force=True)
-        st.session_state["kb"] = (n_chunks, n_files)
-
-    if "kb" not in st.session_state:
-        try:
-            st.session_state["kb"] = rag.build_index(force=False)
-        except Exception as e:
-            st.session_state["kb"] = (0, 0)
-            st.warning(f"Index not ready: {e}")
-
-    n_chunks, n_files = st.session_state.get("kb", (0, 0))
-    if n_chunks:
-        st.markdown(f"<span class='kb-pill kb-on'>● {n_files} files · "
-                    f"{n_chunks} chunks indexed</span>", unsafe_allow_html=True)
-    else:
-        st.markdown("<span class='kb-pill kb-off'>● no reference material yet "
-                    "(works without it)</span>", unsafe_allow_html=True)
+# Build/load the knowledge-base index silently (no sidebar UI). Retrieval still
+# works automatically; on the web the index refreshes on each redeploy.
+if "kb" not in st.session_state:
+    try:
+        st.session_state["kb"] = rag.build_index(force=False)
+    except Exception:
+        st.session_state["kb"] = (0, 0)
+n_chunks, n_files = st.session_state.get("kb", (0, 0))
 
 
 def _run(system_prompt, user_content, retrieval_query, mode, use_kb=True):

@@ -51,3 +51,67 @@ token; confirm the role/grant on the EPM Cloud instance.
 	    THEN ACCOUNT
 	    ELSE IGNORE
 	END
+Error: Validation error with missing mappings
+Resolution:
+Mappings were missing in one of the dimensions. Navigate to Workbench → Validation Errors and use the Fix Mappings option to create or update the required mappings.
+
+Error: 401 Unauthorized while starting the Integration Agent
+Resolution:
+The encrypted password may be incorrect, or the user does not have the required access/roles. Verify the encrypted password configuration and confirm the user has appropriate access to the environment/application.
+
+Error: Plan Type Null
+Resolution:
+In the Data Load Rule options, ensure a valid Plan Type/Cube is selected. If the Plan Type field is left blank, the load process will fail with this error.
+
+Error: Non Numeric Data
+Resolution:
+Set the delimiter in the Import Format to All Data Type. Incorrect delimiter settings can cause numeric fields to be interpreted improperly during the load process.
+
+Error: Invalid Period Mappings
+Resolution:
+The period format in the source file is incorrect or does not match the configured format. Verify the source period format and update the mappings in Source Period Mappings accordingly.
+
+Error:
+com.microsoft.sqlserver.jdbc.SQLServerException: "encrypt" property is set to "true" and "trustServerCertificate" property is set to "false" but the driver could not establish a secure connection to SQL Server by using Secure Sockets Layer (SSL) encryption: Error: PKIX path building failed.
+Resolution:
+This is an SSL certificate trust issue between the Microsoft SQL Server and the EPM Integration Agent Java process. Update the JDBC URL to include:
+encrypt=true;trustServerCertificate=true;
+Example:
+jdbc:sqlserver://Server:Port;databaseName=DBName;encrypt=true;trustServerCertificate=true;
+
+Error: 3303 Member Missing in EPM
+Resolution:
+The member does not exist in the target application. Create the missing member in the target application or update the mapping to ignore the member if it is not required.
+
+Error: Unknown Member Name
+Resolution:
+Use the fully qualified member name in the filters. Incomplete or incorrect member references can cause this error during execution.
+
+Error: The current 'Smart List/Pivot Dimension' does not contain smart list data type members. Change the 'Smart List/Pivot Dimension'.
+Resolution:
+When using Data Maps to map Smart List values to dimension members across cubes, verify the selected Pivot Dimension. Navigate to Data Map Actions → Options and select the correct Pivot Dimension containing Smart List data type members.
+
+Error: Cannot load data when active users or AIF processes are running
+Resolution:
+This error occurs when another Data Management rule, refresh, or backend AIF process is already running. Wait for the active process to complete and then rerun the data load.
+
+Error:
+2025-12-31 05:46:03,077 INFO  [AIF]: EssbaseRuleFile.getReplaceDataScript - END
+2025-12-31 05:46:03,093 DEBUG [AIF]: Unlocked rule file: AIF0034
+2025-12-31 05:46:03,094 INFO  [AIF]: The load buffer [1] has been closed (finally clause).
+2025-12-31 05:46:03,094 ERROR [AIF]: Cannot Clear Partial Data. Essbase Error(1260046): Unknown Member [Entity].[2112] used in query
+2025-12-31 05:46:03,395 INFO  [AIF]: EssbaseService.loadData - END (false)
+2025-12-31 05:46:03,395 DEBUG [AIF]: aifUtil.callOdiServlet_New - END
+2025-12-31 05:46:03,396 DEBUG [AIF]: CommData.updateWorkflow - START
+Solution:
+If the intersection is new then replace export mode won’t work in ASO
+ERROR: Enabled Drill Through, data retrieval through SV/Forms looks fine but Drill through throws an error
+SOLUTION: Check the loads (member names), drill though is case sensitive 
+
+ERROR: Drill through not enabled at Parent Level
+
+SOLUTION:
+Disable Level 0 Flag
+
+Level 0 Flag—Whether the URL applies only to level 0 descendents of the region.
+https://docs.oracle.com/en/applications/enterprise-performance-management/11.2/caldd/drill_through.html
